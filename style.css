@@ -1,1 +1,467 @@
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#f5f1e8;color:#18243a}.app{max-width:720px;margin:auto;padding:20px 16px 30px}header{text-align:center;margin-bottom:16px}.eyebrow{letter-spacing:.25em;font-weight:800;color:#9b7a35}h1{margin:4px 0;font-size:34px}header p{margin:0;color:#5f6672}.booth{background:#111827;border-radius:22px;padding:10px;box-shadow:0 10px 30px #0002}.booth video{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:15px;background:#000}.controls,.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:12px}.controls button,.actions button,.button{border:0;border-radius:999px;padding:13px 18px;font-weight:700;cursor:pointer;text-decoration:none;text-align:center;background:#fff;color:#18243a;min-height:46px}.primary{background:#b28a3c!important;color:#fff!important}.controls button:disabled{opacity:.5}.countdown{position:absolute;left:50%;transform:translateX(-50%);margin-top:-55%;font-size:80px;font-weight:900;color:white;text-shadow:0 4px 20px #000}.result{margin-top:20px;background:#fff;border-radius:22px;padding:16px;text-align:center}.result h2{margin-top:0}.result img{width:100%;border-radius:12px;display:block}.status{font-size:14px;color:#5f6672}footer{text-align:center;margin-top:22px;color:#6b7280;line-height:1.6}footer em{display:block;margin-top:5px}@media(max-width:420px){h1{font-size:28px}.app{padding:14px 10px}.countdown{font-size:64px}}
+* {
+  box-sizing: border-box;
+}
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+
+body {
+  margin: 0;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f6f1e8,
+      #e9e0d1
+    );
+
+  color: #18263a;
+}
+
+
+.app {
+  width: 100%;
+  max-width: 850px;
+
+  margin: auto;
+
+  padding:
+    30px
+    20px
+    50px;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+  text-align: center;
+
+  margin-bottom: 25px;
+}
+
+
+.eyebrow {
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  letter-spacing: 8px;
+
+  color: #9b7636;
+
+  margin-bottom: 8px;
+}
+
+
+.header h1 {
+
+  margin: 0;
+
+  font-size: 38px;
+
+  color: #20324a;
+}
+
+
+.header p {
+
+  margin-top: 10px;
+
+  color: #5e6874;
+
+  line-height: 1.5;
+
+  font-size: 17px;
+}
+
+
+
+/* =========================
+   PHOTO BOOTH
+========================= */
+
+.booth {
+
+  background: #111b2b;
+
+  padding: 12px;
+
+  border-radius: 25px;
+
+  box-shadow:
+    0 20px 45px
+    rgba(0,0,0,.18);
+}
+
+
+.camera-container {
+
+  width: 100%;
+
+  aspect-ratio: 1 / 1;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: 18px;
+
+  background: #000;
+}
+
+
+#video {
+
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+
+  background: #000;
+}
+
+
+/* Mirror preview kamera depan */
+
+#video.front-camera {
+
+  transform: scaleX(-1);
+
+}
+
+
+/* =========================
+   COUNTDOWN
+========================= */
+
+.countdown {
+
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  pointer-events: none;
+
+  font-size: clamp(
+    80px,
+    20vw,
+    180px
+  );
+
+  font-weight: 800;
+
+  color: white;
+
+  text-shadow:
+    0 5px 20px
+    rgba(0,0,0,.7);
+}
+
+
+
+/* =========================
+   BUTTON
+========================= */
+
+.controls {
+
+  display: flex;
+
+  justify-content: center;
+
+  gap: 12px;
+
+  flex-wrap: wrap;
+
+  padding-top: 14px;
+}
+
+
+button,
+.button {
+
+  border: none;
+
+  border-radius: 50px;
+
+  padding:
+    14px
+    22px;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  text-decoration: none;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  transition:
+    transform .2s ease,
+    opacity .2s ease;
+}
+
+
+button:hover,
+.button:hover {
+
+  transform:
+    translateY(-2px);
+
+}
+
+
+button:disabled {
+
+  opacity: .6;
+
+  cursor: not-allowed;
+
+}
+
+
+.controls button {
+
+  background: #f4f4f4;
+
+  color: #243246;
+}
+
+
+.controls .primary,
+.primary {
+
+  background:
+    linear-gradient(
+      135deg,
+      #c69b43,
+      #9c752d
+    );
+
+  color: white;
+
+  box-shadow:
+    0 8px 20px
+    rgba(156,117,45,.3);
+}
+
+
+
+/* =========================
+   RESULT
+========================= */
+
+.result {
+
+  margin-top: 25px;
+
+  padding: 25px;
+
+  background:
+    rgba(255,255,255,.75);
+
+  border-radius: 25px;
+
+  text-align: center;
+
+  box-shadow:
+    0 15px 35px
+    rgba(0,0,0,.08);
+}
+
+
+.result h2 {
+
+  margin-top: 0;
+
+  margin-bottom: 20px;
+
+  color: #26374d;
+}
+
+
+#resultImg {
+
+  width: 100%;
+
+  max-width: 600px;
+
+  display: block;
+
+  margin: auto;
+
+  border-radius: 15px;
+
+  box-shadow:
+    0 10px 25px
+    rgba(0,0,0,.2);
+}
+
+
+.actions {
+
+  display: flex;
+
+  justify-content: center;
+
+  gap: 12px;
+
+  flex-wrap: wrap;
+
+  margin-top: 20px;
+}
+
+
+.actions button {
+
+  background: #e9edf2;
+
+  color: #26374d;
+}
+
+
+
+/* =========================
+   FOOTER
+========================= */
+
+footer {
+
+  text-align: center;
+
+  margin-top: 28px;
+
+  color: #657080;
+
+  line-height: 1.8;
+
+  font-size: 16px;
+}
+
+
+footer em {
+
+  font-size: 15px;
+}
+
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (
+  max-width: 600px
+) {
+
+  .app {
+
+    padding:
+      22px
+      12px
+      35px;
+
+  }
+
+
+  .header h1 {
+
+    font-size: 30px;
+
+  }
+
+
+  .header p {
+
+    font-size: 14px;
+
+  }
+
+
+  .eyebrow {
+
+    font-size: 12px;
+
+    letter-spacing: 6px;
+
+  }
+
+
+  .booth {
+
+    border-radius: 18px;
+
+    padding: 8px;
+
+  }
+
+
+  .camera-container {
+
+    border-radius: 13px;
+
+  }
+
+
+  .controls {
+
+    gap: 8px;
+
+  }
+
+
+  button,
+  .button {
+
+    padding:
+      12px
+      16px;
+
+    font-size: 14px;
+
+  }
+
+
+  .result {
+
+    padding: 18px 10px;
+
+    border-radius: 18px;
+
+  }
+
+
+  .result h2 {
+
+    font-size: 21px;
+
+  }
+
+}
