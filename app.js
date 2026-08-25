@@ -94,7 +94,13 @@
           ? "✓ Salinan foto juga sudah dikirim ke galeri panitia."
           : "Foto siap di-download, tetapi salinan panitia gagal dikirim.";
       } catch(e) {
-        uploadStatus.textContent = "Foto siap di-download. Koneksi ke galeri panitia belum tersedia.";
+        } catch(e) {
+  console.error("UPLOAD ERROR:", e);
+
+  uploadStatus.textContent =
+    "Foto siap di-download, tetapi pengiriman ke galeri gagal: " +
+    e.message;
+}
       }
     } else {
       uploadStatus.textContent = "✓ Foto siap di-download. Penyimpanan panitia belum dihubungkan.";
