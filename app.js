@@ -1,494 +1,76 @@
 (() => {
-  const video = document.getElementById("video");
-  const canvas = document.getElementById("canvas");
-  const countdown = document.getElementById("countdown");
-  const captureBtn = document.getElementById("captureBtn");
-  const switchBtn = document.getElementById("switchBtn");
-  const result = document.getElementById("result");
-  const resultImg = document.getElementById("resultImg");
-  const downloadBtn = document.getElementById("downloadBtn");
-  const againBtn = document.getElementById("againBtn");
-  const uploadStatus = document.getElementById("uploadStatus");
 
-  const frameUrl = "frame.png";
+  const video =
+    document.getElementById("video");
+
+  const canvas =
+    document.getElementById("canvas");
+
+  const countdown =
+    document.getElementById("countdown");
+
+  const captureBtn =
+    document.getElementById("captureBtn");
+
+  const switchBtn =
+    document.getElementById("switchBtn");
+
+  const result =
+    document.getElementById("result");
+
+  const resultImg =
+    document.getElementById("resultImg");
+
+  const downloadBtn =
+    document.getElementById("downloadBtn");
+
+  const againBtn =
+    document.getElementById("againBtn");
+
+
+  const FRAME_URL = "frame.png";
+
 
   let stream = null;
-  let facing = "user";
+
+  let facingMode = "user";
+
   let busy = false;
 
 
-  // =========================
-  // MEMBUKA KAMERA
-  // =========================
-  async function startCamera() {
+  /* =========================
+     LOAD FRAME
+  ========================= */
 
-    // Matikan stream kamera sebelumnya
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
-      stream = null;
-    }
+  const frame = new Image();
 
-    // Tampilan sementara
-    video.srcObject = null;
+  frame.src = FRAME_URL;
 
-    try {
-      console.log("Membuka kamera...");
-      console.log("Mode kamera:", facing);
 
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode:
-            facing === "user"
-              ? { ideal: "user" }
-              : { ideal: "environment" },
-
-          width: {
-            ideal: 1280
-          },
-
-          height: {
-            ideal: 720
-          }
-        },
-
-        audio: false
-      });
-
-      console.log("Kamera berhasil dibuka:", stream);
-
-      // Hubungkan stream ke video
-      video.srcObject = stream;
-
-      // Pastikan video berjalan
-      await video.play();
-
-      console.log("Video berhasil dimainkan");
-
-    } catch (error) {
-
-      console.error("ERROR KAMERA:", error);
-
-      let message = "Kamera tidak dapat dibuka.\n\n";
-
-      if (error.name === "NotAllowedError") {
-
-        message +=
-          "Izin kamera ditolak.\n\n" +
-          "Klik ikon 🔒 di samping alamat website lalu ubah Kamera menjadi IZINKAN.";
-
-      } else if (error.name === "NotFoundError") {
-
-        message +=
-          "Kamera tidak ditemukan.\n\n" +
-          "Pastikan webcam terhubung dan aktif.";
-
-      } else if (error.name === "NotReadableError") {
-
-        message +=
-          "Kamera sedang digunakan aplikasi lain.\n\n" +
-          "Tutup Zoom, Google Meet, WhatsApp, aplikasi Camera Windows, atau aplikasi lain yang menggunakan kamera.";
-
-      } else {
-
-        message +=
-          "Error: " +
-          error.name +
-          "\n\n" +
-          error.message;
-      }
-
-      alert(message);
-    }
-  }
-
-
-  // =========================
-  // FUNGSI JEDA
-  // =========================
-  function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-
-  // =========================
-  // COUNTDOWN FOTO
-  // =========================
-  async function doCountdown() {
-
-    if (!stream) {
-      alert("Kamera belum aktif.");
-      return;
-    }
-
-    busy = true;
-
-    captureBtn.disabled = true;
-
-    for (const n of [3, 2, 1]) {
-
-      countdown.textContent = n;
-
-      await sleep(700);
-    }
-
-    countdown.textContent = "📸";
-
-    await sleep(250);
-
-    countdown.textContent = "";
-
-    await composePhoto();
-
-    captureBtn.disabled = false;
-
-    busy = false;
-  }
-
-
-  // =========================
-  // MEMBUAT FOTO + FRAME
-  // =========================
-  async function composePhoto() {
-
-    try {
-
-      const w = video.videoWidth || 1280;
-      const h = video.videoHeight || 720;
-
-      canvas.width = w;
-      canvas.height = h;
-
-      const ctx = canvas.getContext("2d");
-
-
-      // =========================
-      // FOTO DARI KAMERA
-      // =========================
-
-      ctx.save();
-
-      // Mirror kamera depan
-      if (facing === "user") {
-
-        ctx.translate(w, 0);
-
-        ctx.scale(-1, 1);
-      }
-
-      ctx.drawImage(
-        video,
-        0,
-        0,
-        w,
-        h
-      );
-
-      ctx.restore();
-
-
-      // =========================
-      // LOAD FRAME
-      // =========================
-
-      const frame = new Image();
-
-      frame.src = frameUrl;
-
-      await new Promise((resolve, reject) => {
-
-        frame.onload = resolve;
-
-        frame.onerror = () => {
-          reject(
-            new Error(
-              "Frame tidak dapat dimuat: " +
-              frameUrl
-            )
-          );
-        };
-
-      });
-
-
-      // =========================
-      // PASANG FRAME
-      // =========================
-
-      ctx.drawImage(
-        frame,
-        0,
-        0,
-        w,
-        h
-      );
-
-
-      // =========================
-      // HASIL FOTO
-      // =========================
-
-      const dataUrl = canvas.toDataURL(
-        "image/jpeg",
-        0.92
-      );
-
-
-      // Tampilkan hasil
-      resultImg.src = dataUrl;
-
-
-      // Tombol download
-      downloadBtn.href = dataUrl;
-
-      downloadBtn.download =
-        `PRATOGA_${new Date()
-          .toISOString()
-          .replace(/[:.]/g, "-")}.jpg`;
-
-
-      // Tampilkan area hasil
-      result.hidden = false;
-
-
-      result.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-
-
-      // =========================
-      // STATUS UPLOAD
-      // =========================
-
-      uploadStatus.textContent =
-        "Menyiapkan salinan untuk panitia…";
-
-
-      // =========================
-      // KIRIM FOTO KE GOOGLE DRIVE
-      // =========================
-
-      if (
-        typeof UPLOAD_ENDPOINT !== "undefined" &&
-        UPLOAD_ENDPOINT &&
-        UPLOAD_ENDPOINT.trim()
-      ) {
-
-        try {
-
-          const base64 =
-            dataUrl.split(",")[1];
-
-
-          const payload = {
-
-            filename:
-              downloadBtn.download,
-
-            mimeType:
-              "image/jpeg",
-
-            base64:
-              base64
-
-          };
-
-
-          console.log(
-            "Mengirim foto ke:",
-            UPLOAD_ENDPOINT
-          );
-
-
-          const response =
-            await fetch(
-              UPLOAD_ENDPOINT,
-              {
-
-                method: "POST",
-
-                headers: {
-                  "Content-Type":
-                    "text/plain;charset=utf-8"
-                },
-
-                body:
-                  JSON.stringify(payload)
-
-              }
-            );
-
-
-          const responseText =
-            await response.text();
-
-
-          console.log(
-            "Response server:",
-            responseText
-          );
-
-
-          let data;
-
-          try {
-
-            data =
-              JSON.parse(
-                responseText
-              );
-
-          } catch (e) {
-
-            throw new Error(
-              responseText
-            );
-
-          }
-
-
-          if (data.success || data.ok) {
-
-            uploadStatus.textContent =
-              "✓ Salinan foto berhasil dikirim ke galeri panitia.";
-
-          } else {
-
-            uploadStatus.textContent =
-              "Foto siap di-download, tetapi salinan panitia gagal dikirim.";
-
-            console.error(
-              "Upload gagal:",
-              data
-            );
-
-          }
-
-        } catch (error) {
-
-          console.error(
-            "ERROR UPLOAD:",
-            error
-          );
-
-          uploadStatus.textContent =
-            "Foto siap di-download, tetapi salinan panitia gagal dikirim.";
-
-        }
-
-      } else {
-
-        uploadStatus.textContent =
-          "✓ Foto siap di-download.";
-
-      }
-
-    } catch (error) {
-
-      console.error(
-        "ERROR MEMBUAT FOTO:",
-        error
-      );
-
-      alert(
-        "Terjadi masalah saat membuat foto:\n\n" +
-        error.message
-      );
-
-    }
-  }
-
-
-  // =========================
-  // TOMBOL AMBIL FOTO
-  // =========================
-
-  captureBtn.addEventListener(
-    "click",
-    () => {
-
-      if (!busy) {
-
-        doCountdown();
-
-      }
-
-    }
-  );
-
-
-  // =========================
-  // TOMBOL BALIK KAMERA
-  // =========================
-
-  switchBtn.addEventListener(
-    "click",
-    async () => {
-
-      facing =
-        facing === "user"
-          ? "environment"
-          : "user";
-
-      console.log(
-        "Ganti kamera ke:",
-        facing
-      );
-
-      await startCamera();
-
-    }
-  );
-
-
-  // =========================
-  // TOMBOL FOTO LAGI
-  // =========================
-
-  againBtn.addEventListener(
-    "click",
-    () => {
-
-      result.hidden = true;
-
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-
-    }
-  );
-
-
-  // =========================
-  // CEK DUKUNGAN KAMERA
-  // =========================
-
-  if (
-    !navigator.mediaDevices ||
-    !navigator.mediaDevices.getUserMedia
-  ) {
+  frame.onerror = () => {
 
     alert(
-      "Browser ini tidak mendukung akses kamera.\n\n" +
-      "Gunakan Google Chrome versi terbaru."
+      "Frame tidak dapat dimuat.\n\n" +
+      "Pastikan file frame.png berada di folder yang sama dengan index.html."
     );
 
-  } else {
-
-    // Buka kamera otomatis
-    startCamera();
-
-  }
+  };
 
 
-  // =========================
-  // MATIKAN KAMERA SAAT PAGE DITUTUP
-  // =========================
 
-  window.addEventListener(
-    "beforeunload",
-    () => {
+  /* =========================
+     START CAMERA
+  ========================= */
+
+  async function startCamera() {
+
+    try {
+
+      captureBtn.disabled = true;
+
+      captureBtn.textContent =
+        "⏳ Membuka Kamera...";
+
 
       if (stream) {
 
@@ -498,9 +80,649 @@
             track => track.stop()
           );
 
+        stream = null;
+
+      }
+
+
+      video.srcObject = null;
+
+
+      const constraints = {
+
+        video: {
+
+          facingMode: {
+            ideal: facingMode
+          },
+
+          width: {
+            ideal: 1920
+          },
+
+          height: {
+            ideal: 1080
+          }
+
+        },
+
+        audio: false
+
+      };
+
+
+      stream =
+        await navigator
+          .mediaDevices
+          .getUserMedia(
+            constraints
+          );
+
+
+      video.srcObject = stream;
+
+
+      await video.play();
+
+
+      /* Mirror hanya untuk preview kamera depan */
+
+      if (
+        facingMode === "user"
+      ) {
+
+        video.classList.add(
+          "front-camera"
+        );
+
+      } else {
+
+        video.classList.remove(
+          "front-camera"
+        );
+
+      }
+
+
+      captureBtn.disabled = false;
+
+      captureBtn.textContent =
+        "📸 Ambil Foto";
+
+
+    } catch (error) {
+
+      console.error(
+        "CAMERA ERROR:",
+        error
+      );
+
+
+      captureBtn.disabled = false;
+
+      captureBtn.textContent =
+        "📸 Ambil Foto";
+
+
+      let message =
+        "Kamera tidak dapat dibuka.\n\n";
+
+
+      if (
+        error.name ===
+        "NotAllowedError"
+      ) {
+
+        message +=
+          "Izin kamera belum diberikan.\n\n" +
+          "Klik ikon kamera atau ikon kunci di samping alamat website, lalu pilih IZINKAN kamera.";
+
+      }
+
+      else if (
+        error.name ===
+        "NotFoundError"
+      ) {
+
+        message +=
+          "Kamera tidak ditemukan.\n\n" +
+          "Pastikan perangkat memiliki kamera.";
+
+      }
+
+      else if (
+        error.name ===
+        "NotReadableError"
+      ) {
+
+        message +=
+          "Kamera sedang digunakan aplikasi lain.\n\n" +
+          "Tutup Zoom, Google Meet, WhatsApp, Camera, atau aplikasi lain.";
+
+      }
+
+      else {
+
+        message +=
+          error.name +
+          "\n\n" +
+          error.message;
+
+      }
+
+
+      alert(
+        message
+      );
+
+    }
+
+  }
+
+
+
+  /* =========================
+     SLEEP
+  ========================= */
+
+  function sleep(ms) {
+
+    return new Promise(
+      resolve =>
+        setTimeout(
+          resolve,
+          ms
+        )
+    );
+
+  }
+
+
+
+  /* =========================
+     COUNTDOWN
+  ========================= */
+
+  async function takePhoto() {
+
+    if (busy) {
+      return;
+    }
+
+
+    if (!stream) {
+
+      alert(
+        "Kamera belum aktif."
+      );
+
+      return;
+
+    }
+
+
+    busy = true;
+
+
+    captureBtn.disabled = true;
+
+    switchBtn.disabled = true;
+
+
+    for (
+      const number of [3, 2, 1]
+    ) {
+
+      countdown.textContent =
+        number;
+
+      await sleep(800);
+
+    }
+
+
+    countdown.textContent =
+      "📸";
+
+
+    await sleep(250);
+
+
+    countdown.textContent =
+      "";
+
+
+    await createPhoto();
+
+
+    captureBtn.disabled = false;
+
+    switchBtn.disabled = false;
+
+    busy = false;
+
+  }
+
+
+
+  /* =========================
+     CREATE PHOTO
+  ========================= */
+
+  async function createPhoto() {
+
+    try {
+
+      if (!frame.complete) {
+
+        await new Promise(
+          (resolve, reject) => {
+
+            frame.onload =
+              resolve;
+
+            frame.onerror =
+              reject;
+
+          }
+        );
+
+      }
+
+
+      /*
+       * Gunakan ukuran asli frame.
+       *
+       * Ini penting agar frame tidak
+       * stretch atau rusak di HP.
+       */
+
+      const outputWidth =
+        frame.naturalWidth;
+
+      const outputHeight =
+        frame.naturalHeight;
+
+
+      canvas.width =
+        outputWidth;
+
+      canvas.height =
+        outputHeight;
+
+
+      const ctx =
+        canvas.getContext("2d");
+
+
+      /*
+       * VIDEO SIZE
+       */
+
+      const videoWidth =
+        video.videoWidth;
+
+      const videoHeight =
+        video.videoHeight;
+
+
+      /*
+       * COVER CROP
+       *
+       * Video akan memenuhi
+       * ukuran frame tanpa gepeng.
+       */
+
+      const videoRatio =
+        videoWidth /
+        videoHeight;
+
+
+      const outputRatio =
+        outputWidth /
+        outputHeight;
+
+
+      let sourceX = 0;
+
+      let sourceY = 0;
+
+      let sourceWidth =
+        videoWidth;
+
+      let sourceHeight =
+        videoHeight;
+
+
+      if (
+        videoRatio >
+        outputRatio
+      ) {
+
+        /*
+         * Video terlalu lebar
+         */
+
+        sourceWidth =
+          videoHeight *
+          outputRatio;
+
+
+        sourceX =
+          (
+            videoWidth -
+            sourceWidth
+          ) / 2;
+
+      }
+
+      else {
+
+        /*
+         * Video terlalu tinggi
+         */
+
+        sourceHeight =
+          videoWidth /
+          outputRatio;
+
+
+        sourceY =
+          (
+            videoHeight -
+            sourceHeight
+          ) / 2;
+
+      }
+
+
+      /*
+       * FOTO KAMERA
+       */
+
+      ctx.save();
+
+
+      /*
+       * Mirror hasil jika kamera depan
+       */
+
+      if (
+        facingMode === "user"
+      ) {
+
+        ctx.translate(
+          outputWidth,
+          0
+        );
+
+        ctx.scale(
+          -1,
+          1
+        );
+
+      }
+
+
+      ctx.drawImage(
+
+        video,
+
+        sourceX,
+        sourceY,
+
+        sourceWidth,
+        sourceHeight,
+
+        0,
+        0,
+
+        outputWidth,
+        outputHeight
+
+      );
+
+
+      ctx.restore();
+
+
+      /*
+       * PASANG FRAME
+       *
+       * Frame dipasang menggunakan
+       * ukuran asli canvas.
+       */
+
+      ctx.drawImage(
+
+        frame,
+
+        0,
+        0,
+
+        outputWidth,
+        outputHeight
+
+      );
+
+
+      /*
+       * HASIL JPEG
+       */
+
+      const dataUrl =
+        canvas.toDataURL(
+          "image/jpeg",
+          0.95
+        );
+
+
+      resultImg.src =
+        dataUrl;
+
+
+      /*
+       * DOWNLOAD
+       */
+
+      const now =
+        new Date();
+
+
+      const filename =
+        `PRATOGA_${now
+          .toISOString()
+          .replace(
+            /[:.]/g,
+            "-"
+          )}.jpg`;
+
+
+      downloadBtn.href =
+        dataUrl;
+
+
+      downloadBtn.download =
+        filename;
+
+
+      /*
+       * TAMPILKAN HASIL
+       */
+
+      result.hidden =
+        false;
+
+
+      setTimeout(
+        () => {
+
+          result.scrollIntoView({
+
+            behavior: "smooth",
+
+            block: "start"
+
+          });
+
+        },
+        200
+      );
+
+
+    }
+
+    catch (error) {
+
+      console.error(
+        "PHOTO ERROR:",
+        error
+      );
+
+
+      alert(
+        "Terjadi masalah saat membuat foto.\n\n" +
+        error.message
+      );
+
+    }
+
+  }
+
+
+
+  /* =========================
+     CAPTURE BUTTON
+  ========================= */
+
+  captureBtn.addEventListener(
+
+    "click",
+
+    takePhoto
+
+  );
+
+
+
+  /* =========================
+     SWITCH CAMERA
+  ========================= */
+
+  switchBtn.addEventListener(
+
+    "click",
+
+    async () => {
+
+      if (busy) {
+        return;
+      }
+
+
+      if (
+        facingMode === "user"
+      ) {
+
+        facingMode =
+          "environment";
+
+      }
+
+      else {
+
+        facingMode =
+          "user";
+
+      }
+
+
+      await startCamera();
+
+    }
+
+  );
+
+
+
+  /* =========================
+     PHOTO AGAIN
+  ========================= */
+
+  againBtn.addEventListener(
+
+    "click",
+
+    () => {
+
+      result.hidden =
+        true;
+
+
+      window.scrollTo({
+
+        top: 0,
+
+        behavior: "smooth"
+
+      });
+
+    }
+
+  );
+
+
+
+  /* =========================
+     CHECK CAMERA SUPPORT
+  ========================= */
+
+  if (
+
+    !navigator.mediaDevices ||
+
+    !navigator.mediaDevices.getUserMedia
+
+  ) {
+
+    alert(
+      "Browser ini tidak mendukung kamera.\n\n" +
+      "Gunakan Google Chrome atau Safari versi terbaru."
+    );
+
+  }
+
+  else {
+
+    startCamera();
+
+  }
+
+
+
+  /* =========================
+     STOP CAMERA
+  ========================= */
+
+  window.addEventListener(
+
+    "beforeunload",
+
+    () => {
+
+      if (stream) {
+
+        stream
+          .getTracks()
+          .forEach(
+            track =>
+              track.stop()
+          );
+
       }
 
     }
+
   );
 
 })();
