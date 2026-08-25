@@ -1,45 +1,149 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>PRATOGA Photo Booth</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+
+  <title>PRATOGA Photo Booth</title>
+
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-<main class="app">
-  <header>
-    <div class="eyebrow">PRATOGA</div>
-    <h1>Photo Booth</h1>
-    <p>Fakultas Sains dan Teknologi<br>Universitas Kristen Wira Wacana Sumba</p>
-  </header>
 
-  <section class="booth">
-    <video id="video" autoplay playsinline muted></video>
-    <canvas id="canvas" hidden></canvas>
-    <div id="countdown" class="countdown" aria-live="polite"></div>
-    <div class="controls">
-      <button id="switchBtn" type="button">↺ Balik Kamera</button>
-      <button id="captureBtn" class="primary" type="button">📸 Ambil Foto</button>
-    </div>
-  </section>
+  <main class="app">
 
-  <section id="result" class="result" hidden>
-    <h2>Foto kamu sudah jadi 🎉</h2>
-    <img id="resultImg" alt="Hasil foto PRATOGA">
-    <div class="actions">
-      <a id="downloadBtn" class="primary button" download="PRATOGA.jpg">⬇️ Download Foto</a>
-      <button id="againBtn" type="button">📸 Foto Lagi</button>
-    </div>
-    <p id="uploadStatus" class="status"></p>
-  </section>
+    <header class="header">
 
-  <footer>
-    Rabu, 26 Agustus 2026<br>
-    <em>“Memulai dengan Harapan, Menyelesaikannya dengan Indah”</em>
-  </footer>
-</main>
-<script src="config.js"></script>
-<script src="app.js"></script>
+      <div class="eyebrow">
+        PRATOGA
+      </div>
+
+      <h1>
+        Photo Booth
+      </h1>
+
+      <p>
+        Fakultas Sains dan Teknologi<br>
+        Universitas Kristen Wira Wacana Sumba
+      </p>
+
+    </header>
+
+
+    <!-- PHOTO BOOTH -->
+
+    <section class="booth">
+
+      <div class="camera-container">
+
+        <video
+          id="video"
+          autoplay
+          playsinline
+          muted
+        ></video>
+
+        <div
+          id="countdown"
+          class="countdown"
+        ></div>
+
+      </div>
+
+
+      <canvas
+        id="canvas"
+        hidden
+      ></canvas>
+
+
+      <div class="controls">
+
+        <button
+          id="switchBtn"
+          type="button"
+        >
+          ↺ Balik Kamera
+        </button>
+
+
+        <button
+          id="captureBtn"
+          class="primary"
+          type="button"
+        >
+          📸 Ambil Foto
+        </button>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- HASIL FOTO -->
+
+    <section
+      id="result"
+      class="result"
+      hidden
+    >
+
+      <h2>
+        Foto kamu sudah jadi 🎉
+      </h2>
+
+
+      <img
+        id="resultImg"
+        alt="Hasil Foto PRATOGA"
+      >
+
+
+      <div class="actions">
+
+        <a
+          id="downloadBtn"
+          class="primary button"
+          download="PRATOGA.jpg"
+        >
+          ⬇ Download Foto
+        </a>
+
+
+        <button
+          id="againBtn"
+          type="button"
+        >
+          📸 Foto Lagi
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <footer>
+
+      Rabu, 26 Agustus 2026
+
+      <br>
+
+      <em>
+        “Memulai dengan Harapan, Menyelesaikannya dengan Indah”
+      </em>
+
+    </footer>
+
+  </main>
+
+
+  <script src="app.js"></script>
+
 </body>
 </html>
